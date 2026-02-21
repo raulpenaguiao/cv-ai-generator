@@ -48,6 +48,18 @@ cp .env.example .env
 VITE_API_URL=http://localhost:5000
 ```
 
+**Windows users:** If using Command Prompt (not PowerShell), use:
+```cmd
+type .env.example > .env
+```
+
+Then open `.env` in a text editor and ensure it contains:
+```
+VITE_API_URL=http://localhost:5000
+```
+VITE_API_URL=http://localhost:5000
+```
+
 The default (`http://localhost:5000`) works if you run the Flask backend locally.
 
 ### 3. Start the dev server
