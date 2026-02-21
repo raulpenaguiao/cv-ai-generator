@@ -1,0 +1,467 @@
+API_documentation
+---
+
+# 📄 CV App – Backend API Documentation
+
+**Base URL**
+
+```
+https://api.yourcvapp.com/v1
+```
+
+**Authentication**
+
+All authenticated endpoints require:
+
+```
+Authorization: Bearer <JWT_TOKEN>
+```
+
+Content type:
+
+```
+Content-Type: application/json
+```
+
+---
+
+# 1️⃣ Authentication & API Key Management
+
+---
+
+## 1.1 Add API Key
+
+Creates a new API key for agentic features.
+
+**POST** `/api-keys`
+
+### Request
+
+```json
+{
+  "name": "OpenAI Production Key",
+  "provider": "openai",
+  "key": "sk-xxxx"
+}
+```
+
+### Response
+
+```json
+{
+  "id": "api_key_123",
+  "name": "OpenAI Production Key",
+  "provider": "openai",
+  "createdAt": "2026-02-21T10:00:00Z"
+}
+```
+
+---
+
+## 1.2 Edit API Key
+
+**PUT** `/api-keys/{id}`
+
+---
+
+## 1.3 Delete API Key
+
+**DELETE** `/api-keys/{id}`
+
+---
+
+## 1.4 List API Keys
+
+**GET** `/api-keys`
+
+---
+
+# 2️⃣ Profile Management
+
+---
+
+## 2.1 Add / Edit Personal Information
+
+**PUT** `/profile`
+
+### Request
+
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@email.com",
+  "phone": "+123456789",
+  "location": "London, UK",
+  "website": "https://john.dev",
+  "linkedin": "https://linkedin.com/in/john",
+  "github": "https://github.com/john"
+}
+```
+
+### Response
+
+```json
+{
+  "id": "profile_1",
+  "updatedAt": "2026-02-21T10:00:00Z"
+}
+```
+
+---
+
+## 2.2 Read Personal Information
+
+**GET** `/profile`
+
+---
+
+## 2.3 Photo Management
+
+### Upload Photo
+
+**POST** `/profile/photos`
+(Multipart form-data)
+
+### Delete Photo
+
+**DELETE** `/profile/photos/{photoId}`
+
+### Select Main Photo
+
+**PUT** `/profile/photos/{photoId}/select-main`
+
+---
+
+# 3️⃣ Work Experience
+
+---
+
+## 3.1 Add Experience
+
+**POST** `/experiences`
+
+### Request
+
+```json
+{
+  "category": "work", 
+  "title": "Software Engineer",
+  "organization": "Tech Corp",
+  "startDate": "2022-01-01",
+  "endDate": "2024-01-01",
+  "description": "Worked on backend APIs.",
+  "keywords": ["Node.js", "Postgres", "AWS"]
+}
+```
+
+**Category options:**
+
+* `work`
+* `education`
+* `hobby`
+
+---
+
+## 3.2 Edit Experience
+
+**PUT** `/experiences/{id}`
+
+---
+
+## 3.3 Delete Experience
+
+**DELETE** `/experiences/{id}`
+
+---
+
+## 3.4 Read Experiences
+
+**GET** `/experiences`
+
+---
+
+# 4️⃣ Projects
+
+---
+
+## 4.1 Add Project
+
+**POST** `/projects`
+
+```json
+{
+  "title": "CV Builder",
+  "description": "AI-powered CV builder",
+  "keywords": ["React", "AI", "Resume"]
+}
+```
+
+---
+
+## 4.2 Edit Project
+
+**PUT** `/projects/{id}`
+
+---
+
+## 4.3 Delete Project
+
+**DELETE** `/projects/{id}`
+
+---
+
+## 4.4 Read Projects
+
+**GET** `/projects`
+
+---
+
+# 5️⃣ Job Descriptions & History
+
+---
+
+## 5.1 Add Job Description
+
+**POST** `/job-descriptions`
+
+```json
+{
+  "title": "Senior Backend Engineer",
+  "company": "Startup Inc",
+  "description": "Looking for Node.js expert..."
+}
+```
+
+---
+
+## 5.2 Edit Job Description
+
+**PUT** `/job-descriptions/{id}`
+
+---
+
+## 5.3 Delete Job Description
+
+**DELETE** `/job-descriptions/{id}`
+
+---
+
+## 5.4 Read Job Descriptions
+
+**GET** `/job-descriptions`
+
+---
+
+# 6️⃣ Saved Blurbs
+
+---
+
+## 6.1 Add Saved Blurb
+
+**POST** `/blurbs`
+
+```json
+{
+  "type": "summary",
+  "content": "Experienced backend engineer...",
+  "jobDescriptionId": "job_123"
+}
+```
+
+---
+
+## 6.2 Edit Saved Blurb
+
+**PUT** `/blurbs/{id}`
+
+---
+
+## 6.3 Delete Saved Blurb
+
+**DELETE** `/blurbs/{id}`
+
+---
+
+## 6.4 Read Saved Blurbs
+
+**GET** `/blurbs`
+
+---
+
+# 7️⃣ AI / Agentic Endpoints
+
+These endpoints require a valid API key configured.
+
+---
+
+## 7.1 Generate / Modify Blurb
+
+**POST** `/agent/generate-blurb`
+
+### Request
+
+```json
+{
+  "type": "summary",
+  "mode": "adapt", 
+  "previousBlurb": "Backend engineer with 5 years...",
+  "jobDescriptionId": "job_123"
+}
+```
+
+### Modes
+
+* `full` → generate from scratch
+* `modify` → improve previous
+* `adapt` → tailor to job
+* `double-check` → grammar & ATS check
+
+### Response
+
+```json
+{
+  "generatedBlurb": "Results-driven backend engineer..."
+}
+```
+
+---
+
+## 7.2 Job Description Analysis
+
+**POST** `/agent/analyze-job`
+
+```json
+{
+  "jobDescriptionId": "job_123"
+}
+```
+
+### Response
+
+```json
+{
+  "keywords": ["Node.js", "Microservices", "AWS"],
+  "requiredSkills": ["REST APIs", "PostgreSQL"],
+  "seniorityLevel": "Senior"
+}
+```
+
+---
+
+# 8️⃣ LaTeX & PDF Compilation
+
+---
+
+## 8.1 Compile CV to PDF
+
+**POST** `/latex/compile`
+
+### Request
+
+```json
+{
+  "template": "modern-1",
+  "fontSize": 11,
+  "personalInfoId": "profile_1",
+  "blurbIds": ["blurb_1", "blurb_2"],
+  "experienceIds": ["exp_1", "exp_2"],
+  "projectIds": ["proj_1"]
+}
+```
+
+### Response
+
+```json
+{
+  "pdfUrl": "https://cdn.yourcvapp.com/cv_123.pdf"
+}
+```
+
+---
+
+# 9️⃣ Suggested Database Model (High-Level)
+
+**User**
+
+* id
+* email
+* passwordHash
+
+**Profile**
+
+* userId
+* personalInfo
+* photos[]
+
+**Experience**
+
+* userId
+* category
+* title
+* organization
+* dates
+* description
+* keywords[]
+
+**Project**
+
+* userId
+* title
+* description
+* keywords[]
+
+**JobDescription**
+
+* userId
+* title
+* company
+* description
+* analysis
+
+**Blurb**
+
+* userId
+* type
+* content
+* jobDescriptionId
+
+**ApiKey**
+
+* userId
+* provider
+* encryptedKey
+
+---
+
+# 🔐 Error Format
+
+Standard error response:
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Start date must be before end date"
+  }
+}
+```
+
+---
+
+# 🚀 Recommended Enhancements (Optional but Smart)
+
+* Pagination on GET endpoints
+* Soft delete instead of hard delete
+* Versioned templates for LaTeX
+* Rate limiting on agent endpoints
+* Async PDF compilation (job queue)
+
+---
+
+If you'd like, I can next:
+
+* Convert this into **OpenAPI (Swagger) YAML**
+* Design the **database schema in SQL**
+* Or define a **clean frontend ↔ backend contract** specifically tailored for React/Vue**
+

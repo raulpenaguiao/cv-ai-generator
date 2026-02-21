@@ -1,0 +1,29 @@
+API Framework
+
+Profile management
+ - Add/delete user/private key
+ - Add project, edit project
+ - Add job, edit job
+ - Add personal info, edit personal info
+ - Add photo, delete photo, select main photo
+ - Add edit delete API key
+ - Read personal information
+
+Work experience:
+- Add/edit/delete experience (category(work, education, hobby), title, organization, start/end, description, keywords)
+- Add/edit/delete project (title, description, keywords)
+- Read projects
+- Read experiences
+- Add job description
+
+History
+- Add/edit/delete/Read Job descriptions
+- Add/edit/delete/Read saved blurbs
+- Read job analysis
+
+Agentic calls
+ - (Re)generate blurb (full, modify, adapt, double-check) for each of the template fields (we start with four template fields) (inputs: previous blurb, type) -> 
+ - Job description analysis
+ 
+Latex
+ - Compile pdf (blurbs and personal info as input, as well as font size and template chosen)

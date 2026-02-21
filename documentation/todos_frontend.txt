@@ -1,0 +1,52 @@
+
+Regenerate with specific blurbs.
+If it is good you should be able to modify the blurbs
+Directly see the end result of the CV after clicking the button
+
+For the MVP:
+Is it a big deal to change all this to react?
+Across different cycles I don't want to think about anything else
+Just one CV template for now
+Blurb management should have three buttons
+	- Generate
+	- Rephrase but keep structure and meaning and all that
+	- Check grammar
+Delete tab where we generate a CV
+- A dark/light mode toggle using shadcn/ui’s theming system
+Start with the most basebone display
+Start with the most basebone API calls
+
+
+Todo latter:
+ - Just drop the link to get the job description
+ - More templates
+ - Add more functionalities on what to include in the blurbs from projects and jobs only latter
+ - See the changes on the final product as we change the blurb
+
+
+New architecture of the front end:
+- Vite + React + TypeScript
+- Tailwind CSS (configured via the Vite plugin — do NOT generate tailwind.config.js or postcss.config.js)
+- shadcn/ui for accessible, themeable UI components
+- TanStack Router (as the only routing solution — do NOT use react-router-dom)
+- Biome as the linter and formatter (do NOT use ESLint or Prettier)
+- Use only a single tsconfig.json (do NOT generate tsconfig.app.json or tsconfig.node.json)
+- Do NOT include any Node-specific or server-side configuration
+- No TanStack Query or external data fetching
+- Deployment target is GitHub Pages (gh-pages branch)
+- Set the correct base path in vite.config.ts for GitHub Pages
+
+The site should include:
+- A landing page (/) with name, short intro, and navigation
+- Routing must be fully handled by TanStack Router
+- A dark/light mode toggle using shadcn/ui’s theming system
+- Tailwind and shadcn/ui components used for layout and content (e.g., Tabs, Card, Button)
+- Biome must be configured via biome.json for formatting and linting
+- Include predeploy and deploy npm scripts using gh-pages to publish the dist/ folder
+
+Ensure all pages are reachable via clean routes and that the app runs locally with npm run dev.
+
+
+
+
+
