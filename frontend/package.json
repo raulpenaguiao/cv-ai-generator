@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "homepage": "https://yourusername.github.io/cv-ai-generator",
+  "homepage": "https://raulpenaguiao.github.io/cv-ai-generator",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -30,7 +30,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@tailwindcss/oxide-linux-x64-gnu": "^4.2.0",
     "@tailwindcss/vite": "^4.0.0",
     "@types/node": "^22.0.0",
     "@types/react": "^18.3.18",

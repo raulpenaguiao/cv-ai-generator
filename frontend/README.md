@@ -21,8 +21,6 @@ A React + TypeScript frontend for the CV AI Generator. Uses AI to help you creat
 - **npm** ≥ 9
 - The **backend** running at `http://localhost:5000` (or set `VITE_API_URL`)
 
-> **Node 18 note:** Tailwind CSS v4 prefers Node ≥ 20 for its native Rust binding. On Node 18, the Linux x64 binding (`@tailwindcss/oxide-linux-x64-gnu`) is bundled as a devDependency to work around npm's optional-dependency resolution bug. The build will succeed — you may just see an `EBADENGINE` warning during `npm install`, which is safe to ignore. Upgrading to Node 20+ eliminates the warning.
-
 ---
 
 ## Getting Started
