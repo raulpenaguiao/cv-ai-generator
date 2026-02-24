@@ -29,6 +29,10 @@ A React + TypeScript frontend for the CV AI Generator. Uses AI to help you creat
 
 ```bash
 cd frontend
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt update
+sudo apt install npm
+sudo apt install -y nodejs
 npm install
 ```
 
