@@ -21,7 +21,7 @@ import { LoadingSpinner } from "@/components/LoadingSpinner"
 import { listJobDescriptions } from "@/api/jobDescriptions"
 import { generateBlurb } from "@/api/agent"
 import { listBlurbs, saveBlurb } from "@/api/blurbs"
-import { compileCV } from "@/api/latex"
+import { compileCV, fetchPdfBlobUrl } from "@/api/latex"
 import { listExperiences } from "@/api/experiences"
 import { listProjects } from "@/api/projects"
 import type { JobDescription, BlurbType, BlurbMode, Blurb } from "@/types"
@@ -64,12 +64,10 @@ export function GeneratePage() {
   const [loadingDialog, setLoadingDialog] = useState(false)
   const [generatingAll, setGeneratingAll] = useState(false)
   const [compiling, setCompiling] = useState(false)
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
+  const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const [backendDown, setBackendDown] = useState(false)
-
-  const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000"
 
   useEffect(() => {
     listJobDescriptions()
@@ -161,7 +159,7 @@ export function GeneratePage() {
   async function handleCompile() {
     setCompiling(true)
     setError(null)
-    setPdfUrl(null)
+    setPdfBlobUrl(null)
     try {
       const [experiences, projects, savedBlurbs] = await Promise.all([
         listExperiences(),
@@ -175,7 +173,7 @@ export function GeneratePage() {
         experienceIds: experiences.map((e) => e.id),
         projectIds: projects.map((p) => p.id),
       })
-      setPdfUrl(res.pdfUrl)
+      setPdfBlobUrl(await fetchPdfBlobUrl(res.pdfUrl))
     } catch (err) {
       setError(err instanceof Error ? err.message : "Compilation failed")
     } finally {
@@ -342,20 +340,20 @@ export function GeneratePage() {
             </CardContent>
           </Card>
 
-          {pdfUrl && (
+          {pdfBlobUrl && (
             <Card>
               <CardContent className="p-4 flex flex-col gap-3">
                 <p className="text-sm font-medium text-green-700 dark:text-green-400">
                   CV compiled!
                 </p>
-                <a href={`${BASE_URL}${pdfUrl}`} target="_blank" rel="noopener noreferrer">
+                <a href={pdfBlobUrl} download="cv.pdf">
                   <Button variant="outline" size="sm" className="w-full">
                     <Download className="mr-2 h-4 w-4" />
                     Download PDF
                   </Button>
                 </a>
                 <iframe
-                  src={`${BASE_URL}${pdfUrl}`}
+                  src={pdfBlobUrl}
                   title="Compiled CV preview"
                   className="w-full rounded border"
                   style={{ height: 480 }}

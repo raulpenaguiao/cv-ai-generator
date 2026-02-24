@@ -5,6 +5,10 @@ export function getProfile(): Promise<Profile> {
   return get<Profile>("/profile")
 }
 
+export function listPhotos(): Promise<Photo[]> {
+  return get<Photo[]>("/profile/photos")
+}
+
 export function saveProfile(data: Omit<Profile, "id" | "updatedAt">): Promise<{ id: string; updatedAt: string }> {
   return put("/profile", data)
 }

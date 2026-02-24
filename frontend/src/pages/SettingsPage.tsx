@@ -16,9 +16,10 @@ import { listApiKeys, addApiKey, deleteApiKey } from "@/api/apiKeys"
 import { listExperiences } from "@/api/experiences"
 import { listProjects } from "@/api/projects"
 import { listBlurbs } from "@/api/blurbs"
-import { compileCV } from "@/api/latex"
+import { compileCV, fetchPdfBlobUrl } from "@/api/latex"
 import type { ApiKey, Experience, Project, Blurb } from "@/types"
-import { Plus, Trash2, Key, FileText, Download } from "lucide-react"
+import { Plus, Trash2, Key, FileText, Download, Upload, PackageOpen } from "lucide-react"
+import { exportData, importData } from "@/api/exportImport"
 
 const PROVIDERS = ["openai"]
 const FONT_SIZES = [10, 11, 12]
@@ -44,10 +45,14 @@ export function SettingsPage() {
   const [selectedProjIds, setSelectedProjIds] = useState<Set<string>>(new Set())
   const [selectedBlurbIds, setSelectedBlurbIds] = useState<Set<string>>(new Set())
   const [compiling, setCompiling] = useState(false)
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
+  const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null)
   const [compileError, setCompileError] = useState<string | null>(null)
 
-  const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000"
+  // Import / Export
+  const [exporting, setExporting] = useState(false)
+  const [importing, setImporting] = useState(false)
+  const [transferError, setTransferError] = useState<string | null>(null)
+  const [importSuccess, setImportSuccess] = useState(false)
 
   useEffect(() => {
     listApiKeys()
@@ -105,7 +110,7 @@ export function SettingsPage() {
   async function handleCompile() {
     setCompiling(true)
     setCompileError(null)
-    setPdfUrl(null)
+    setPdfBlobUrl(null)
     try {
       const res = await compileCV({
         template: selectedTemplate,
@@ -114,11 +119,40 @@ export function SettingsPage() {
         experienceIds: [...selectedExpIds],
         projectIds: [...selectedProjIds],
       })
-      setPdfUrl(res.pdfUrl)
+      setPdfBlobUrl(await fetchPdfBlobUrl(res.pdfUrl))
     } catch (err) {
       setCompileError(err instanceof Error ? err.message : "Compilation failed")
     } finally {
       setCompiling(false)
+    }
+  }
+
+  async function handleExport() {
+    setExporting(true)
+    setTransferError(null)
+    try {
+      await exportData()
+    } catch (err) {
+      setTransferError(err instanceof Error ? err.message : "Export failed")
+    } finally {
+      setExporting(false)
+    }
+  }
+
+  async function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setImporting(true)
+    setTransferError(null)
+    setImportSuccess(false)
+    try {
+      await importData(file)
+      setImportSuccess(true)
+    } catch (err) {
+      setTransferError(err instanceof Error ? err.message : "Import failed")
+    } finally {
+      setImporting(false)
+      e.target.value = ""
     }
   }
 
@@ -229,6 +263,71 @@ export function SettingsPage() {
                 </Button>
               </div>
             ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Import / Export */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <PackageOpen className="h-5 w-5" />
+            Import / Export
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          <p className="text-sm text-muted-foreground">
+            Export all your data (profile, photos, experiences, projects, job descriptions, blurbs)
+            as a ZIP archive. Import a previously exported archive to restore your data.
+            API keys are not included in the export.
+          </p>
+
+          {transferError && (
+            <p className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{transferError}</p>
+          )}
+          {importSuccess && (
+            <p className="rounded-md bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400">
+              Import successful. Refresh any open pages to see the updated data.
+            </p>
+          )}
+
+          <div className="flex flex-wrap gap-3">
+            <Button
+              variant="outline"
+              onClick={handleExport}
+              disabled={exporting || backendDown}
+            >
+              {exporting ? (
+                <LoadingSpinner size="sm" className="mr-2" />
+              ) : (
+                <Download className="mr-2 h-4 w-4" />
+              )}
+              {exporting ? "Exporting…" : "Export data"}
+            </Button>
+
+            <Label
+              htmlFor="import-zip"
+              className={backendDown ? "cursor-not-allowed opacity-50" : "cursor-pointer"}
+            >
+              <Button variant="outline" asChild disabled={importing || backendDown}>
+                <span>
+                  {importing ? (
+                    <LoadingSpinner size="sm" className="mr-2" />
+                  ) : (
+                    <Upload className="mr-2 h-4 w-4" />
+                  )}
+                  {importing ? "Importing…" : "Import data"}
+                </span>
+              </Button>
+            </Label>
+            <input
+              id="import-zip"
+              type="file"
+              accept=".zip"
+              className="hidden"
+              onChange={handleImport}
+              disabled={importing || backendDown}
+            />
           </div>
         </CardContent>
       </Card>
@@ -354,11 +453,11 @@ export function SettingsPage() {
             )}
           </Button>
 
-          {pdfUrl && (
+          {pdfBlobUrl && (
             <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-4 flex flex-col gap-3">
               <p className="font-medium text-green-700 dark:text-green-400">CV compiled successfully!</p>
               <Button asChild className="w-full sm:w-auto">
-                <a href={`${BASE_URL}${pdfUrl}`} target="_blank" rel="noopener noreferrer">
+                <a href={pdfBlobUrl} download="cv.pdf">
                   <Download className="mr-2 h-4 w-4" />
                   Download PDF
                 </a>

@@ -12,6 +12,7 @@ from app.blueprints.job_descriptions import bp as job_descriptions_bp
 from app.blueprints.blurbs import bp as blurbs_bp
 from app.blueprints.agent import bp as agent_bp
 from app.blueprints.latex import bp as latex_bp
+from app.blueprints.export_import import bp as export_import_bp
 
 
 def create_app(test_config: dict | None = None) -> Flask:
@@ -41,6 +42,7 @@ def create_app(test_config: dict | None = None) -> Flask:
     app.register_blueprint(blurbs_bp)
     app.register_blueprint(agent_bp)
     app.register_blueprint(latex_bp)
+    app.register_blueprint(export_import_bp)
 
     # Standard error handlers
     @app.errorhandler(404)

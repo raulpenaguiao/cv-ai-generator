@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { PageLoader } from "@/components/LoadingSpinner"
-import { getProfile, saveProfile, uploadPhoto, deletePhoto, setMainPhoto } from "@/api/profile"
+import { getProfile, saveProfile, listPhotos, uploadPhoto, deletePhoto, setMainPhoto } from "@/api/profile"
 import type { Profile, Photo } from "@/types"
 
 const FIELDS: { key: keyof Omit<Profile, "id" | "updatedAt">; label: string; type?: string }[] = [
@@ -39,8 +39,8 @@ export function ProfilePage() {
   const [backendDown, setBackendDown] = useState(false)
 
   useEffect(() => {
-    getProfile()
-      .then((p) => {
+    Promise.all([getProfile(), listPhotos()])
+      .then(([p, photos]) => {
         setForm({
           firstName: p.firstName ?? "",
           lastName: p.lastName ?? "",
@@ -51,6 +51,7 @@ export function ProfilePage() {
           linkedin: p.linkedin ?? "",
           github: p.github ?? "",
         })
+        setPhotos(photos)
       })
       .catch(() => setBackendDown(true))
       .finally(() => setLoading(false))
@@ -127,7 +128,7 @@ export function ProfilePage() {
         </p>
       )}
 
-      <form onSubmit={handleSave}>
+      <form onSubmit={handleSave} noValidate>
         <Card className="mb-6">
           <CardHeader>
             <CardTitle>Personal Information</CardTitle>

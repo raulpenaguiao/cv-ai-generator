@@ -37,6 +37,7 @@ export function JobDescriptionsPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [analyzingId, setAnalyzingId] = useState<string | null>(null)
   const [analyses, setAnalyses] = useState<Record<string, JobAnalysis>>({})
+  const [analyzeError, setAnalyzeError] = useState<string | null>(null)
   const [backendDown, setBackendDown] = useState(false)
 
   useEffect(() => {
@@ -94,12 +95,13 @@ export function JobDescriptionsPage() {
 
   async function handleAnalyze(id: string) {
     setAnalyzingId(id)
+    setAnalyzeError(null)
     try {
       const result = await analyzeJob(id)
       setAnalyses((prev) => ({ ...prev, [id]: result }))
       setExpandedId(id)
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Analysis failed")
+      setAnalyzeError(err instanceof Error ? err.message : "Analysis failed")
     } finally {
       setAnalyzingId(null)
     }
@@ -121,6 +123,10 @@ export function JobDescriptionsPage() {
         <div className="mb-6 rounded-md border border-yellow-400/40 bg-yellow-400/10 p-4 text-sm text-yellow-700 dark:text-yellow-300">
           <strong>Backend not running.</strong> Start the Flask server (<code className="font-mono">python run.py</code>) to manage job descriptions.
         </div>
+      )}
+
+      {analyzeError && (
+        <p className="mb-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive">{analyzeError}</p>
       )}
 
       {jobs.length === 0 && (
