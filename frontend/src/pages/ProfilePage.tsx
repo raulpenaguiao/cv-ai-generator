@@ -50,7 +50,6 @@ export function ProfilePage() {
           linkedin: p.linkedin ?? "",
           github: p.github ?? "",
         })
-        setPhotos(p as unknown as Photo[] ?? [])
       })
       .catch(() => {})
       .finally(() => setLoading(false))
