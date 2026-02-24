@@ -36,6 +36,7 @@ export function ProfilePage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [backendDown, setBackendDown] = useState(false)
 
   useEffect(() => {
     getProfile()
@@ -51,7 +52,7 @@ export function ProfilePage() {
           github: p.github ?? "",
         })
       })
-      .catch(() => {})
+      .catch(() => setBackendDown(true))
       .finally(() => setLoading(false))
   }, [])
 
@@ -111,6 +112,12 @@ export function ProfilePage() {
     <main className="mx-auto max-w-2xl px-4 py-8">
       <h1 className="mb-6 text-2xl font-bold">Profile</h1>
 
+      {backendDown && (
+        <div className="mb-6 rounded-md border border-yellow-400/40 bg-yellow-400/10 p-4 text-sm text-yellow-700 dark:text-yellow-300">
+          <strong>Backend not running.</strong> Start the Flask server (<code className="font-mono">python run.py</code>) to view and save your profile.
+        </div>
+      )}
+
       {error && (
         <p className="mb-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</p>
       )}
@@ -141,7 +148,7 @@ export function ProfilePage() {
           </CardContent>
         </Card>
 
-        <Button type="submit" disabled={saving} className="w-full sm:w-auto">
+        <Button type="submit" disabled={saving || backendDown} className="w-full sm:w-auto">
           {saving ? "Saving…" : "Save Profile"}
         </Button>
       </form>
@@ -153,7 +160,7 @@ export function ProfilePage() {
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <div>
-            <Label htmlFor="photo-upload" className="cursor-pointer">
+            <Label htmlFor="photo-upload" className={backendDown ? "cursor-not-allowed opacity-50" : "cursor-pointer"}>
               <Button variant="outline" size="sm" asChild>
                 <span>Upload Photo</span>
               </Button>
@@ -164,6 +171,7 @@ export function ProfilePage() {
               accept="image/*"
               className="hidden"
               onChange={handlePhotoUpload}
+              disabled={backendDown}
             />
           </div>
 

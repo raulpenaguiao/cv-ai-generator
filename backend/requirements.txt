@@ -4,6 +4,8 @@ flask-limiter>=3.7.0
 bcrypt>=4.2.0
 cryptography>=42.0.0
 python-dotenv>=1.0.0
+PyJWT>=2.8.0
+openai>=1.0.0
 
 # Testing
 pytest>=8.0.0

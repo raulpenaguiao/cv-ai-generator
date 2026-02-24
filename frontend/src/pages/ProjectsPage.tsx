@@ -29,11 +29,12 @@ export function ProjectsPage() {
   const [keywordsInput, setKeywordsInput] = useState("")
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [backendDown, setBackendDown] = useState(false)
 
   useEffect(() => {
     listProjects()
       .then(setProjects)
-      .catch(() => {})
+      .catch(() => setBackendDown(true))
       .finally(() => setLoading(false))
   }, [])
 
@@ -90,11 +91,17 @@ export function ProjectsPage() {
     <main className="mx-auto max-w-3xl px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Projects</h1>
-        <Button size="sm" onClick={openAdd}>
+        <Button size="sm" onClick={openAdd} disabled={backendDown}>
           <Plus className="mr-1 h-4 w-4" />
           Add Project
         </Button>
       </div>
+
+      {backendDown && (
+        <div className="mb-6 rounded-md border border-yellow-400/40 bg-yellow-400/10 p-4 text-sm text-yellow-700 dark:text-yellow-300">
+          <strong>Backend not running.</strong> Start the Flask server (<code className="font-mono">python run.py</code>) to manage projects.
+        </div>
+      )}
 
       {projects.length === 0 && (
         <p className="text-sm text-muted-foreground">No projects yet. Add your first one!</p>

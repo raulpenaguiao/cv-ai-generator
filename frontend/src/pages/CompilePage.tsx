@@ -32,6 +32,7 @@ export function CompilePage() {
   const [compiling, setCompiling] = useState(false)
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [backendDown, setBackendDown] = useState(false)
 
   useEffect(() => {
     Promise.all([listExperiences(), listProjects(), listBlurbs()])
@@ -44,7 +45,7 @@ export function CompilePage() {
         setSelectedProjIds(new Set(projs.map((p) => p.id)))
         setSelectedBlurbIds(new Set(blrbs.map((b) => b.id)))
       })
-      .catch(() => {})
+      .catch(() => setBackendDown(true))
   }, [])
 
   function toggleId(set: Set<string>, id: string): Set<string> {
@@ -79,6 +80,12 @@ export function CompilePage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-8">
       <h1 className="mb-6 text-2xl font-bold">Compile CV</h1>
+
+      {backendDown && (
+        <div className="mb-6 rounded-md border border-yellow-400/40 bg-yellow-400/10 p-4 text-sm text-yellow-700 dark:text-yellow-300">
+          <strong>Backend not running.</strong> Start the Flask server (<code className="font-mono">python run.py</code>) to compile your CV.
+        </div>
+      )}
 
       {error && (
         <p className="mb-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</p>
@@ -197,7 +204,7 @@ export function CompilePage() {
         )}
 
         {/* Compile button */}
-        <Button onClick={handleCompile} disabled={compiling} size="lg" className="w-full sm:w-auto">
+        <Button onClick={handleCompile} disabled={compiling || backendDown} size="lg" className="w-full sm:w-auto">
           {compiling ? (
             <>
               <LoadingSpinner size="sm" className="mr-2" />

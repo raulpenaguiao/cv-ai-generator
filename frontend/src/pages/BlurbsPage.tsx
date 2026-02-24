@@ -19,11 +19,12 @@ const BLURB_TYPES: BlurbType[] = ["summary", "skills", "motivation", "closing"]
 export function BlurbsPage() {
   const [blurbs, setBlurbs] = useState<Blurb[]>([])
   const [loading, setLoading] = useState(true)
+  const [backendDown, setBackendDown] = useState(false)
 
   useEffect(() => {
     listBlurbs()
       .then(setBlurbs)
-      .catch(() => {})
+      .catch(() => setBackendDown(true))
       .finally(() => setLoading(false))
   }, [])
 
@@ -42,6 +43,12 @@ export function BlurbsPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-8">
       <h1 className="mb-6 text-2xl font-bold">Saved Blurbs</h1>
+
+      {backendDown && (
+        <div className="mb-6 rounded-md border border-yellow-400/40 bg-yellow-400/10 p-4 text-sm text-yellow-700 dark:text-yellow-300">
+          <strong>Backend not running.</strong> Start the Flask server (<code className="font-mono">python run.py</code>) to view saved blurbs.
+        </div>
+      )}
 
       {blurbs.length === 0 && (
         <p className="text-sm text-muted-foreground">

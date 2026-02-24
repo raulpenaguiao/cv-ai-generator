@@ -44,11 +44,12 @@ export function ExperiencesPage() {
   const [keywordsInput, setKeywordsInput] = useState("")
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [backendDown, setBackendDown] = useState(false)
 
   useEffect(() => {
     listExperiences()
       .then(setExperiences)
-      .catch(() => {})
+      .catch(() => setBackendDown(true))
       .finally(() => setLoading(false))
   }, [])
 
@@ -102,6 +103,12 @@ export function ExperiencesPage() {
     <main className="mx-auto max-w-3xl px-4 py-8">
       <h1 className="mb-6 text-2xl font-bold">Experiences</h1>
 
+      {backendDown && (
+        <div className="mb-6 rounded-md border border-yellow-400/40 bg-yellow-400/10 p-4 text-sm text-yellow-700 dark:text-yellow-300">
+          <strong>Backend not running.</strong> Start the Flask server (<code className="font-mono">python run.py</code>) to manage experiences.
+        </div>
+      )}
+
       <Tabs defaultValue="work">
         <TabsList className="mb-4">
           {CATEGORIES.map(({ value, label }) => (
@@ -116,7 +123,7 @@ export function ExperiencesPage() {
           return (
             <TabsContent key={value} value={value}>
               <div className="mb-4 flex justify-end">
-                <Button size="sm" onClick={() => openAdd(value)}>
+                <Button size="sm" onClick={() => openAdd(value)} disabled={backendDown}>
                   <Plus className="mr-1 h-4 w-4" />
                   Add {label}
                 </Button>

@@ -18,11 +18,12 @@ export function SettingsPage() {
   const [form, setForm] = useState({ name: "", provider: "openai", key: "" })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [backendDown, setBackendDown] = useState(false)
 
   useEffect(() => {
     listApiKeys()
       .then(setKeys)
-      .catch(() => {})
+      .catch(() => setBackendDown(true))
       .finally(() => setLoading(false))
   }, [])
 
@@ -65,13 +66,18 @@ export function SettingsPage() {
               <Key className="h-5 w-5" />
               API Keys
             </CardTitle>
-            <Button size="sm" onClick={() => setShowForm(!showForm)}>
+            <Button size="sm" onClick={() => setShowForm(!showForm)} disabled={backendDown}>
               <Plus className="mr-1 h-4 w-4" />
               Add Key
             </Button>
           </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
+          {backendDown && (
+            <div className="rounded-md border border-yellow-400/40 bg-yellow-400/10 p-4 text-sm text-yellow-700 dark:text-yellow-300">
+              <strong>Backend not running.</strong> Start the Flask server (<code className="font-mono">python run.py</code>) to manage API keys.
+            </div>
+          )}
           <p className="text-sm text-muted-foreground">
             Your API keys are encrypted at rest and never shown in plaintext after creation.
           </p>

@@ -37,6 +37,7 @@ export function JobDescriptionsPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [analyzingId, setAnalyzingId] = useState<string | null>(null)
   const [analyses, setAnalyses] = useState<Record<string, JobAnalysis>>({})
+  const [backendDown, setBackendDown] = useState(false)
 
   useEffect(() => {
     listJobDescriptions()
@@ -46,7 +47,7 @@ export function JobDescriptionsPage() {
           if (j.analysis) setAnalyses((prev) => ({ ...prev, [j.id]: j.analysis! }))
         })
       })
-      .catch(() => {})
+      .catch(() => setBackendDown(true))
       .finally(() => setLoading(false))
   }, [])
 
@@ -110,11 +111,17 @@ export function JobDescriptionsPage() {
     <main className="mx-auto max-w-3xl px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Job Descriptions</h1>
-        <Button size="sm" onClick={openAdd}>
+        <Button size="sm" onClick={openAdd} disabled={backendDown}>
           <Plus className="mr-1 h-4 w-4" />
           Add Job
         </Button>
       </div>
+
+      {backendDown && (
+        <div className="mb-6 rounded-md border border-yellow-400/40 bg-yellow-400/10 p-4 text-sm text-yellow-700 dark:text-yellow-300">
+          <strong>Backend not running.</strong> Start the Flask server (<code className="font-mono">python run.py</code>) to manage job descriptions.
+        </div>
+      )}
 
       {jobs.length === 0 && (
         <p className="text-sm text-muted-foreground">No job descriptions saved yet.</p>
@@ -134,7 +141,7 @@ export function JobDescriptionsPage() {
                     size="sm"
                     variant="outline"
                     onClick={() => handleAnalyze(job.id)}
-                    disabled={analyzingId === job.id}
+                    disabled={analyzingId === job.id || backendDown}
                   >
                     {analyzingId === job.id ? (
                       <LoadingSpinner size="sm" className="mr-1" />
