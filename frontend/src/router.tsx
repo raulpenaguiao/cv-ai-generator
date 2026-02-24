@@ -9,7 +9,6 @@ import { ProjectsPage } from "@/pages/ProjectsPage"
 import { JobDescriptionsPage } from "@/pages/JobDescriptionsPage"
 import { BlurbsPage } from "@/pages/BlurbsPage"
 import { GeneratePage } from "@/pages/GeneratePage"
-import { CompilePage } from "@/pages/CompilePage"
 import { SettingsPage } from "@/pages/SettingsPage"
 
 function requireAuth() {
@@ -91,13 +90,6 @@ const generateRoute = createRoute({
   component: GeneratePage,
 })
 
-const compileRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/compile",
-  beforeLoad: requireAuth,
-  component: CompilePage,
-})
-
 const settingsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/settings",
@@ -115,7 +107,6 @@ const routeTree = rootRoute.addChildren([
   jobDescriptionsRoute,
   blurbsRoute,
   generateRoute,
-  compileRoute,
   settingsRoute,
 ])
 

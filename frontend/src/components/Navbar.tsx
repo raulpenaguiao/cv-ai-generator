@@ -11,7 +11,6 @@ const navLinks = [
   { to: "/projects", label: "Projects" },
   { to: "/job-descriptions", label: "Jobs" },
   { to: "/generate", label: "Generate" },
-  { to: "/compile", label: "Compile" },
   { to: "/settings", label: "Settings" },
 ]
 

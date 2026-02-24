@@ -58,7 +58,7 @@ export function GeneratePage() {
   const [generating, setGenerating] = useState<GeneratingState>(initGenerating)
   const [savedMap, setSavedMap] = useState<SavedState>(initSaved)
   const [jobs, setJobs] = useState<JobDescription[]>([])
-  const [selectedJobId, setSelectedJobId] = useState<string>("")
+  const [selectedJobId, setSelectedJobId] = useState<string>("none")
   const [loadDialogType, setLoadDialogType] = useState<BlurbType | null>(null)
   const [dialogBlurbs, setDialogBlurbs] = useState<Blurb[]>([])
   const [loadingDialog, setLoadingDialog] = useState(false)
@@ -87,7 +87,7 @@ export function GeneratePage() {
         type,
         mode: modes[type],
         previousBlurb: blurbs[type] || undefined,
-        jobDescriptionId: selectedJobId || undefined,
+        jobDescriptionId: selectedJobId !== "none" ? selectedJobId : undefined,
       })
       setBlurbs((prev) => ({ ...prev, [type]: res.generatedBlurb }))
       setSavedMap((prev) => ({ ...prev, [type]: false }))
@@ -107,7 +107,7 @@ export function GeneratePage() {
           type,
           mode: modes[type],
           previousBlurb: blurbs[type] || undefined,
-          jobDescriptionId: selectedJobId || undefined,
+          jobDescriptionId: selectedJobId !== "none" ? selectedJobId : undefined,
         }).then((res) => ({ type, text: res.generatedBlurb }))
       )
     )
@@ -149,7 +149,7 @@ export function GeneratePage() {
       await saveBlurb({
         type,
         content: blurbs[type],
-        jobDescriptionId: selectedJobId || undefined,
+        jobDescriptionId: selectedJobId !== "none" ? selectedJobId : undefined,
       })
       setSavedMap((prev) => ({ ...prev, [type]: true }))
       setTimeout(() => setSavedMap((prev) => ({ ...prev, [type]: false })), 2000)
@@ -252,7 +252,7 @@ export function GeneratePage() {
                 <SelectValue placeholder="Select a job description (optional)…" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">None</SelectItem>
+                <SelectItem value="none">None</SelectItem>
                 {jobs.map((job) => (
                   <SelectItem key={job.id} value={job.id}>
                     {job.title} — {job.company}
